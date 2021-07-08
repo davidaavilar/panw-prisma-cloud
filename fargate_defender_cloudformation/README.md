@@ -1,6 +1,6 @@
 # Convert a unprotected task to a protected task Definition (Fargate)
 
-This script help you to convert a YAML AWS CloudFormation with a Fargate Task Definition into a protected TaskDefinition with Prisma Cloud App-Embedded Defender for Fargate.
+This script helps you to convert a YAML AWS CloudFormation with a Fargate Task Definition into a protected TaskDefinition with Prisma Cloud App-Embedded Defender for Fargate.
 
 The script will find the resource with "AWS::ECS::TaskDefinition" in the Cloudformation and will add the Defender en every taskDefinition.
 

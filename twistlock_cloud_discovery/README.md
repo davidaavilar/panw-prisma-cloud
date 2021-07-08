@@ -1,6 +1,6 @@
 # Add Cloud Credentials to Twistlock for Cloud Discovery
 
-This script help you add your Cloud credentials (AWS, Azure and GCP) to Prisma Cloud 'Compute' for Cloud Discovery (Twistlock), NOT ONBOARDING ACCOUNTS.
+This script helps you to add your Cloud credentials (AWS, Azure and GCP) to Prisma Cloud 'Compute' for Cloud Discovery (Twistlock), NOT ONBOARDING ACCOUNTS.
 
 ### Pre-requisites 📋
 
