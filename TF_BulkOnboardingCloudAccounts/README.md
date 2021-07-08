@@ -13,8 +13,11 @@ This script helps you to onboard your AWS Cloud Accounts in bulk to Prisma Cloud
 	.prismacloud_auth.json parameters:
 
 	url (apiX.prismacloud.io)
+
 	username (accesskey)
+
 	password (secret)
+
 	protocol (https)
 
 4. Create a csv file called aws.csv (e.g.) with all cloud accounts info: name, accountId, externalId, groupIDs and roleArn
