@@ -3,10 +3,9 @@ import json
 import csv
 from collections import defaultdict
 
-#us-west1.cloud.twistlock.com/us-3-159209233
-tenant = "us-west1.cloud.twistlock.com/us-3-159209233"
-accesskey = "16a5b6df-0f4c-44a2-8365-9e921ef7a82c"
-secret = "gbseAaSm9ObqoJQzpx7he2wDNrY="
+tenant = ""
+accesskey = ""
+secret = ""
 
 activeDirectoryEndpointUrl = "https://login.microsoftonline.com"
 resourceManagerEndpointUrl = "https://management.azure.com/"
