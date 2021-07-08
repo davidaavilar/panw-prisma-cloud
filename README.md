@@ -10,5 +10,5 @@ This repo includes some scripts to help to automate some tasks in Prisma Cloud.
 
 4. [automate_backups](https://github.com/davidaavilar/prisma-cloud-automation/tree/main/automate_backups); if you want to download the system backups from Prisma Cloud (daily, weekly or monthly).
 
-[![Linkedin](https://i.stack.imgur.com/gVE0j.png) LinkedIn](https://www.linkedin.com/in/david-alejandro-avila-rios-7bb12462/)
+[![](https://i.stack.imgur.com/gVE0j.png) LinkedIn](https://www.linkedin.com/in/david-alejandro-avila-rios-7bb12462/)
 &nbsp;
