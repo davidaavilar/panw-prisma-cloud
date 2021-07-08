@@ -9,5 +9,11 @@ This script help you add your Cloud credentials (AWS, Azure and GCP) to Prisma C
 2. You have to udpate Console and Console Credentials. You can find them in the Console:
 
 	_tenant = ""_
+
 	_accesskey = ""_
+	
 	_secret = ""_
+
+### Notes:
+
+This script only works for Azure Cloud Accounts, for now. We are working adding another Cloud Providers.
