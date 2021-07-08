@@ -1,0 +1,2 @@
+name,accountId,externalId,groupIDs,roleArn
+nameit,123456789,96b4b207-3ecc-41fd-97fc-955f6c255572,,arn:aws:iam::123456789:role/"rolename"
