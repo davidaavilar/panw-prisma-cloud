@@ -18,22 +18,22 @@ This script helps you handle policies in RedLock with a specific label, to clone
 
 TO CLONE POLICIES: OPTION 1
 
-_x.py --disable: Clone and disable the old policies._
+Use `x.py --disable` to clone and disable the old policies.
 
-_x.py --disable --delete: Delete disabled policies._
+Use `x.py --disable` --delete to delete disabled policies.
 
-_x.py --disable --update: Update the name (disabled rules)._
+Use `x.py --disable --update`  to update the name (disabled rules).
 
 TO CLONE POLICIES: OPTION 2
 
-_x.py --delete: Clone and delete the old policies._
+Use `x.py --delete` to clone and delete the old policies.
 
-_x.py --delete --update: Update the name (deleted rules)._
+Use `x.py --delete --update` to update the name (deleted rules).
 
 OTHER OPTIONS
 
-_x.py --enable: Enable ALL listed policies._
+Use `x.py --enable` to enable ALL listed policies.
 
-_x.py --alert-rules: Get Rules Names from Alerts Rules._
+Use `x.py --alert-rules` to get Rules Names from Alerts Rules.
 
-_x.py --label <label>: Label policies._
+Use `x.py --label <label>` to label policies.
