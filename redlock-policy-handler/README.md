@@ -16,7 +16,7 @@ This script helps you handle policies in RedLock with a specific label, to clone
 
 ### How it works 🔧
 
-TO CLONE POLICIES: OPTION 1
+### TO CLONE POLICIES: OPTION 1
 
 Use `x.py --disable` to clone and disable the old policies.
 
@@ -24,13 +24,13 @@ Use `x.py --disable` --delete to delete disabled policies.
 
 Use `x.py --disable --update`  to update the name (disabled rules).
 
-TO CLONE POLICIES: OPTION 2
+### TO CLONE POLICIES: OPTION 2
 
 Use `x.py --delete` to clone and delete the old policies.
 
 Use `x.py --delete --update` to update the name (deleted rules).
 
-OTHER OPTIONS
+### OTHER OPTIONS
 
 Use `x.py --enable` to enable ALL listed policies.
 
