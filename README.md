@@ -10,7 +10,7 @@ This repo includes some scripts to help to automate some tasks in Prisma Cloud.
 
 4. [automate_backups](https://github.com/davidaavilar/prisma-cloud-automation/tree/main/automate_backups); if you want to download the system backups from Prisma Cloud (daily, weekly or monthly).
 
-5. [Redlock_Policy_Handler](https://github.com/davidaavilar/prisma-cloud-automation/tree/main/redlock-policy-hanlder); if you want to handle multiple redlock policies by label.
+5. [Redlock_Policy_Handler](https://github.com/davidaavilar/prisma-cloud-automation/tree/main/redlock-policy-handler); if you want to handle multiple redlock policies by label.
 
 [![David Avila](https://i.stack.imgur.com/gVE0j.png) David Avila](https://www.linkedin.com/in/david-alejandro-avila-rios-7bb12462/)
 &nbsp;
