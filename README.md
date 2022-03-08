@@ -12,5 +12,7 @@ This repo includes some scripts to help to automate some tasks in Prisma Cloud.
 
 5. [Redlock_Policy_Handler](https://github.com/davidaavilar/prisma-cloud-automation/tree/main/redlock-policy-handler); if you want to handle multiple redlock policies by label.
 
+6. [deploy_serverless_defender_java_function](https://github.com/davidaavilar/prisma-cloud-automation/tree/main/deploy_defender_java_function); If you're having trouble embedding defender's portion code into your Java function.
+
 [![David Avila](https://i.stack.imgur.com/gVE0j.png) David Avila](https://www.linkedin.com/in/david-alejandro-avila-rios-7bb12462/)
 &nbsp;
