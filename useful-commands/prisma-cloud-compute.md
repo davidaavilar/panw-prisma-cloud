@@ -12,7 +12,7 @@ sudo install minikube-darwin-amd64 /usr/local/bin/minikube
 minikube start
 ```
 
-**What you’ll need: **
+**What you’ll need:**
     -   2 CPUs or more
     -   2GB of free memory
     -   20GB of free disk space
