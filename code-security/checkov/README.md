@@ -28,4 +28,3 @@ https://www.checkov.io/2.Basics/Installing%20Checkov.html
 `checkov -d . --skip-framework dockerfile cloudformation` to scan all files of current directory EXCLUDING a specific framework, for example `cloudformation`, `dockerfile`, `terraform`, etc, and it shows PASSED/FAILED checks. You can use multiple framework separated by spaces.
 
 `checkov -h` for help.
-
