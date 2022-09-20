@@ -1,4 +1,4 @@
-<H2>Useful Commands using Checkov...</H2>
+<H2>Checkov Useful Commands...</H2>
 
 ### Installing Checkov
 
