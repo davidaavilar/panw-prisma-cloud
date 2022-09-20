@@ -1,8 +1,13 @@
-### Useful Resources about CSPM module of Prisma Cloud...
+<H2> Useful Resources about CSPM module of Prisma Cloud...</H2>
 
 Here you'll find some useful resources about Cloud Security Posture Managment (CSPM) module of Prisma Cloud.
 
 Some Custom RQLs:
+
+### AWS
+
+
+### Azure
 
 1. Azure VMs with Public IPs with attached NSGs allowing "Any"
 
