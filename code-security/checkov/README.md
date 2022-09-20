@@ -6,8 +6,7 @@
 pip install checkov
 ```
 
-https://www.checkov.io/2.Basics/Installing%20Checkov.html
-
+[https://www.checkov.io/2.Basics/Installing%20Checkov.html](https://www.checkov.io/2.Basics/Installing%20Checkov.html)
 
 ## Useful commands
 

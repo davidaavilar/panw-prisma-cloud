@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3 Bucket David Avila
+Parameters:
+  LambdaBucketName:
+    Description: Nombre del Bucket
+    Type: String
+    Default: panwprismacloud7923923
+  VPC:
+    Type: String
+    Default: panwprismacloud
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref LambdaBucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls       : True
+        BlockPublicPolicy     : True
+        IgnorePublicAcls      : True
+        RestrictPublicBuckets : True
+      VersioningConfiguration:
+        Status: Disabled
+  SampleAllowBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref LambdaBucketName
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref LambdaBucketName
+                - /*
+            Principal: '*'
+            Condition:
+              Bool:
+                'aws:SecureTransport': false
+  SampleDenyBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref LambdaBucketName
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Deny
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref LambdaBucketName
+                - /*
+            Principal: '*'
+            Condition:
+              Bool:
+                'aws:SecureTransport': false
+  MgmtSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable services to MGMT interface
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref 'AWS::StackName'
+              - MgmtSecurityGroup
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: udp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: '0.0.0.0/0'
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+          Description: Navegacion general
+        - IpProtocol: tcp
+          FromPort: 88
+          ToPort: 88
+          CidrIp: 0.0.0.0/0
+          Description: Navegacion general
+  InboundRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 3389
+      ToPort: 3389
+  OutboundRule:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 23
+      ToPort: 23
