@@ -1,6 +1,6 @@
-<H2>Checkov Useful Commands...</H2>
+# Checkov Useful Commands...
 
-### Installing Checkov
+## Installing Checkov
 
 ```
 pip install checkov
@@ -9,7 +9,7 @@ pip install checkov
 https://www.checkov.io/2.Basics/Installing%20Checkov.html
 
 
-### Useful commands
+## Useful commands
 
 `checkov -d .` to scan all files of current directory and it shows PASSED/FAILED checks.
 

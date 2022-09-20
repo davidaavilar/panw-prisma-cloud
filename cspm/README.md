@@ -1,16 +1,16 @@
-<H2> Useful Resources about CSPM module of Prisma Cloud...</H2>
+# Useful Resources about CSPM module of Prisma Cloud...
 
 Here you'll find some useful resources about Cloud Security Posture Managment (CSPM) module of Prisma Cloud.
 
 Some Custom RQLs:
 
-### AWS
+## AWS
 
 1. AWS Avoid the use of the "root" account
 
 `event from cloud.audit_logs where cloud.type = 'aws' AND operation in ( 'ConsoleLogin', 'login-auth.sso' ) AND subject = 'root'`
 
-### Azure
+## Azure
 
 1. Azure Ensure that multi-factor authentication is enabled for all non-privileged users
 
