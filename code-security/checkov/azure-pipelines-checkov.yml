@@ -1,0 +1,15 @@
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.8'
+  displayName: 'Install Python 3.8'
+- script: pip install checkov
+  displayName: 'Install the Checkov CLI'
+- script: checkov -d . --quiet --compact --soft-fail # Here your checkov command to scan files
+  displayName: 'Scan Original Template with Checkov'
