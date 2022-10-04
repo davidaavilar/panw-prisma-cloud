@@ -3,7 +3,7 @@
 This Terraform helps you to deploy a vulnerable web app (bWAPP) to test WAAS Protection with Prisma Cloud on Azure.
 
 bWAPP, or a buggy web application, is a free and open source deliberately insecure web application.
-It helps security enthusiasts, developers and students to discover and to prevent web vulnerabilities. More info in [bWAPP project](https://github.com/awsdocs/aws-lambda-developer-guide/tree/main/sample-apps/java-basic)
+It helps security enthusiasts, developers and students to discover and to prevent web vulnerabilities. More info in [bWAPP project](http://www.itsecgames.com/)
 
 ### Pre-requisites 📋
 
@@ -50,3 +50,9 @@ Here you can find some common attacks to test:
 [SQL Injection](https://infosecgirls.gitbook.io/infosecgirls-training/v/appsec/web-application-pentesting/injection/time-based-sql-injection)
 
 [Broken Authentication](https://infosecgirls.gitbook.io/infosecgirls-training/v/appsec/web-application-pentesting/a2-broken-authentication-and-session/broken-authentication-with-bwapp)
+
+### Cleaning Up
+
+```
+terraform destroy
+```
