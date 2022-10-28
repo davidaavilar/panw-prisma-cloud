@@ -2,7 +2,7 @@ import json, os, requests, time, boto3
 from botocore.exceptions import ClientError
 
 Region = "us-east-1"
-secret_name = "netdata-firewall"
+secret_name = "secrets_manager_secret"
 
 try:
     f1 = open('.prismacloud_auth.json')
