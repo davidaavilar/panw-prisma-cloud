@@ -1,0 +1,9 @@
+Makefile.docker
+Makefile.lint
+
+tests/*
+
+.env
+aws/terraform.tfstate*
+aws/terraform.tfvars
+.terraform/

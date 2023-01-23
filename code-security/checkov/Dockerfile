@@ -1,4 +1,4 @@
-FROM nginx:1.19.10
+FROM nginx:latest
 USER root
 RUN useradd -ms /bin/bash nginxuser
 USER nginxuser # changed to nginxuser
