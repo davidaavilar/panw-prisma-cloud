@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  taskdefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - '/bin/sh -c "echo ''<html> <head> <title>Amazon ECS Sample App</title> <style>body
+          {margin-top: 40px; background-color: #333;} </style> </head><body> <div
+          style=color:white;text-align:center> <h1>Amazon ECS Sample App</h1> <h2>Congratulations!</h2>
+          <p>Your application is now running on a container in Amazon ECS.</p> </div></body></html>''
+          >  /usr/local/apache2/htdocs/index.html && httpd-foreground"'
+        Cpu: 256
+        DependsOn:
+        - Condition: START
+          ContainerName: TwistlockDefender
+        EntryPoint:
+        - /var/lib/twistlock/fargate/fargate_defender.sh
+        - fargate
+        - entrypoint
+        - sh
+        - -c
+        Environment:
+        - Name: TW_IMAGE_NAME
+          Value: httpd:2.4
+        - Name: TW_CONTAINER_NAME
+          Value: my-app
+        - Name: DEFENDER_TYPE
+          Value: fargate
+        - Name: FARGATE_TASK
+          Value: fargate-task-definition
+        Essential: true
+        Image: httpd:2.4
+        LinuxParameters:
+          Capabilities:
+            Add:
+            - SYS_PTRACE
+        MemoryReservation: 512
+        Name: my-app
+        PortMappings:
+        - ContainerPort: 80
+          HostPort: 80
+          Protocol: tcp
+        VolumesFrom:
+        - ReadOnly: 'false'
+          SourceContainer: TwistlockDefender
+      - EntryPoint:
+        - /usr/local/bin/defender
+        - fargate
+        - sidecar
+        Environment:
+        - Name: INSTALL_BUNDLE
+          Value: tokenConsole
+        - Name: DEFENDER_TYPE
+          Value: fargate
+        - Name: FARGATE_TASK
+          Value: fargate-task-definition
+        - Name: WS_ADDRESS
+          Value: wss://us-east1.cloud.twistlock.com:443
+        Essential: 'true'
+        Image: registry-auth.twistlock.com/tw_Token/twistlock/defender:defender_21_04_421
+        Name: TwistlockDefender
+      Cpu: 256
+      ExecutionRoleArn: arn:aws:iam::981290364392:role/ecsTaskExecutionRole
+      Family: fargate-task-definition
+      Memory: 512
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - EC2
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition

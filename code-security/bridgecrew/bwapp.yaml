@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bwapp-server
+spec:
+  selector:
+    matchLabels:
+      name: bwapp-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: bwapp-server
+    spec:
+      containers:
+      - name: bwapp-server
+        image: davidaavilar/bwapp
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bwapp-server
+  labels:
+    name: bwapp-server
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    name: bwapp-server
+
+
