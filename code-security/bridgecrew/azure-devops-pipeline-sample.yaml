@@ -1,0 +1,15 @@
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.8'
+  displayName: 'Install Python 3.8'
+- script: pip install bridgecrew
+  displayName: 'Install the Prisma Cloud Code Security'
+- script: bridgecrew --prisma-api-url $(CONSOLE) --bc-api-key $(PRISMA_TOKEN) -d . --repo-id davidaavilar/cli_repo --branch master --compact --quiet
+  displayName: 'Scan IaC Repos with Prisma Cloud'
