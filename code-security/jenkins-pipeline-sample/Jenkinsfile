@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    
+    environment {
+        PRISMA_API_URL='${pc_tenant}'
+    }
+    
+    stages {
+        stage('Checkov') {
+            steps {
+                    script {
+                        docker.image('bridgecrew/checkov:latest').inside("--entrypoint=''") {
+                          try {
+                              sh 'checkov -d . -o cli -o junitxml --output-file-path console,results.xml --bc-api-key ${pc_user}::${pc_password} --repo-id  davila_paloaltonetworks_com/bridgecrew --branch main --compact --quiet'
+                          } catch (err) {
+                              throw err
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
