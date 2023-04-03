@@ -2,7 +2,9 @@
 
 ## TODO
 
-
+- For AWS, it only works for a single account, not for Organization yet. And only for US Regions. If you want to modify, you are free to do it. ```regions``` variable.
+- For GCP, it only works for a single project, not for Organization yet. You must specify the ProjectID.
+- For OCI, it only works for the OCI tenant for Home Region. Not for OKE nodes yet.
 
 ## Overview
 
