@@ -4,57 +4,112 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--azure", "-az", help="Sizing for Azure", action='store_true')
 parser.add_argument("--aws", "-a", help="Sizing for AWS", action='store_true')
 parser.add_argument("--gcp", "-g", help="Sizing for GCP", action='store_true')
+parser.add_argument("--oci", "-o", help="Sizing for OCI", action='store_true')
 parser.add_argument("--project", "-p", help="Project (only for GCP)", type=str)
 args = parser.parse_args()
 sep = "--------------------------------------------------------------------"
 
 def tables(account,acc,data):
-    print ("{:<40} {:<15} {:<10}\n{}".format(account,'Service','Count',sep))
+    print ("{:<40} {:<20} {:<10}\n{}".format(account,'Service','Count',sep))
     for i in data:
         a,b = i
-        print ("{:<40} {:<15} {:<10}".format(acc,a,b))
+        print ("{:<40} {:<20} {:<10}".format(acc,a,b))
     print(sep)
 
 def pcs_sizing_aws():
     import boto3
-    client_ec2 = boto3.client('ec2')
-    client_ecs = boto3.client('ecs')
-    sts_client = boto3.client("sts")
-    org_client = boto3.client('organizations')
+    import botocore
+    from botocore.exceptions import ClientError
 
-    # response = org_client.list_accounts()
-    # print(response)
-    account = sts_client.get_caller_identity()["Account"]
+    client_ec2 = boto3.client('ec2')
+    sts = boto3.client("sts")
+    org = boto3.client('organizations')
+
     print("\n{}\nGetting Resources from AWS\n{}".format(sep,sep))
 
-    # Get EC2 instances running.
-    ec2_group = client_ec2.describe_instances(
-        Filters=[{
-        'Name': 'instance-state-code',
-        'Values': ["0","16","32","64","80"] # 0 (pending), 16 (running), 32 (shutting-down), 48 (terminated), 64 (stopping), and 80 (stopped)
-            },
-        ]
-        )['Reservations']
+    accounts = []
+    # paginator = org.get_paginator('list_accounts')
+    # for page in paginator.paginate():
+    #     for account in page['Accounts']:
+    #         accounts.append(account['Id'])
+    #         response = sts.assume_role(
+    #             RoleArn="arn:aws:iam::" + account['Id'] + ":role/OrganizationAccountAccessRole",
+    #             RoleSessionName=account['Id']
+    #         )
+    try:
+        account = sts.get_caller_identity()["Account"]
+    except botocore.exceptions.ClientError as error:
+        # Put your error handling logic here
+        raise error
 
+    try:
+        regions = [region['RegionName'] for region in client_ec2.describe_regions()['Regions']]
+    except botocore.exceptions.ClientError as error:
+        raise error
+    
+    us_regions = [x for x in regions if x.startswith("us")]
 
-    # Get EC2 instances running on EKS.
-    eks_list = []
-    for ec2 in ec2_group:
-        tags = ec2['Instances'][0]['Tags']
-        for tag in tags:
-            if "eks:" in tag["Key"]:
-                eks_list.append(ec2['Instances'][0])
-                break
+    try:
+        ec2_all = 0
+        eks_all = 0
+        fargate_all = 0
+        lambdas_all = 0
 
-    # Get Fargate task running.
-    fargate_tasks = client_ecs.list_task_definitions()['taskDefinitionArns']
+        for region in us_regions:
 
-    tables("Account",account,
-           [
-        ["EC2", len(ec2_group)],
-        ["EKS_NODES", len(eks_list)],
-        ["FARGATE_TASKS", len(fargate_tasks)]
-        ])
+            ec2 = boto3.client('ec2',region_name=region)
+            client_ecs = boto3.client('ecs',region_name=region)
+            lambda_client = boto3.client('lambda',region_name=region)
+            # Get EC2 instances running.
+            try:
+                ec2_group = ec2.describe_instances(
+                    Filters=[{
+                    'Name': 'instance-state-code',
+                    'Values': ["0","16","32","64","80"] # 0 (pending), 16 (running), 32 (shutting-down), 48 (terminated), 64 (stopping), and 80 (stopped)
+                        },
+                    ]
+                    )['Reservations']
+                ec2_all += len(ec2_group)
+            except botocore.exceptions.ClientError as error:
+                raise error
+    
+            try:
+            # Get EC2 instances running on EKS.
+                eks_list = []
+                for ec2 in ec2_group:
+                    tags = ec2['Instances'][0]['Tags']
+                    for tag in tags:
+                        if "eks:" in tag["Key"]:
+                            eks_list.append(ec2['Instances'][0])
+                            eks_all += 1
+                            break
+            except botocore.exceptions.ClientError as error:
+                raise error
+            
+            try:
+                # Get Fargate task running.
+                fargate_tasks = client_ecs.list_task_definitions()['taskDefinitionArns']
+                fargate_all += len(fargate_tasks)
+            except botocore.exceptions.ClientError as error:
+                raise error
+            
+            try:
+            # Get AWS Lambdas
+                lambdas = lambda_client.list_functions()['Functions']
+                lambdas_all += len(lambdas)
+            except botocore.exceptions.ClientError as error:
+                raise error
+
+        tables("Account",account,
+            [
+            ["EC2", ec2_all],
+            ["EKS_NODES", eks_all],
+            ["FARGATE_TASKS", fargate_all],
+            ["LAMBDAS_FUNCTIONS", lambdas_all]
+            ])
+        
+    except botocore.exceptions.ClientError as error:
+        raise error
 
 def pcs_sizing_az():
 
@@ -137,11 +192,46 @@ def pcs_sizing_gcp(project):
         ["GKE_NODES", node_count]
         ])
 
+def pcs_sizing_oci():
+
+    import oci
+    
+    print("\n{}\nGetting Resources from OCI\n{}".format(sep,sep))
+    config = oci.config.from_file()
+    IdentityClient = oci.identity.IdentityClient(config)
+    ComputeClient = oci.core.ComputeClient(config)
+    ContainerClient = oci.container_engine.ContainerEngineClient(config)
+
+    # List all Compartments
+
+    list_compartments = IdentityClient.list_compartments(
+        compartment_id=config['tenancy']
+    )
+    
+    # For every compartment, list all the VMs and OKE nodes (TODO)
+
+    for compartment in list_compartments.data:
+        response = ComputeClient.list_instances(compartment_id=compartment.id)
+        compute_oci = 0
+        for instance in response.data:
+            if instance.lifecycle_state != "TERMINATED":
+                compute_oci += 1
+
+        # node_pool = ContainerClient.list_node_pools(compartment_id=compartment.id)
+        # print(node_pool.data)
+
+        tables("Compartment",str(compartment.name),
+            [
+            ["Compute_Instances", compute_oci]
+            ])
+        
 if __name__ == '__main__':
     if args.aws == True:
         pcs_sizing_aws()
     elif args.azure == True:
         pcs_sizing_az()  
+    elif args.oci == True:
+        pcs_sizing_oci()  
     elif args.gcp == True:#and args.project:
         pcs_sizing_gcp(project=args.project)
     elif args.gcp == True and not args.project:
