@@ -247,4 +247,4 @@ if __name__ == '__main__':
         print("If GCP is selected, you must specify a project.")
         exit()
     else:
-        pcs_sizing_aws(), pcs_sizing_az()
+        print("You must specify an argument.\n\x1B[3m'--aws'\x1B[0m for AWS\n\x1B[3m'--azure'\x1B[0m for Azure\n\x1B[3m'--gcp --project <project-name>'\x1B[0m for GCP\n\x1B[3m'--oci'\x1B[0m for OCI")
