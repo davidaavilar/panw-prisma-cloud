@@ -117,11 +117,13 @@ def pcs_sizing_az():
     from azure.identity import DefaultAzureCredential
     from azure.mgmt.containerservice import ContainerServiceClient
     from azure.mgmt.subscription import SubscriptionClient
+    from azure.mgmt.web import WebSiteManagementClient
     sub_client = SubscriptionClient(credential=DefaultAzureCredential())
     print("\n{}\nGetting Resources from AZURE\n{}".format(sep,sep))
     for sub in sub_client.subscriptions.list():
         compute_client = ComputeManagementClient(credential=DefaultAzureCredential(), subscription_id=sub.subscription_id)
         containerservice_client = ContainerServiceClient(credential=DefaultAzureCredential(), subscription_id=sub.subscription_id)
+        app_service_client = WebSiteManagementClient(credential=DefaultAzureCredential(), subscription_id=sub.subscription_id)
         # List VMs in subscription
         vm_list = []
         for vm in compute_client.virtual_machines.list_all():
@@ -139,10 +141,17 @@ def pcs_sizing_az():
             for ap in agent_pool:
                 node_count += ap.count
 
+        # List Azure Functions
+        function_list = 0
+        for function in app_service_client.web_apps.list():
+            if function.kind.startswith('function'):
+                function_list += 1
+
         tables("Subscription",str(sub.display_name + " (" + sub.subscription_id.split('-')[4].strip() + ")"),
             [
             ["VM", len(vm_list)],
-            ["AKS_NODES", node_count]
+            ["AKS_NODES", node_count],
+            ["AZURE_FUNCTIONS",function_list]
             ])
 
 def pcs_sizing_gcp(project):
