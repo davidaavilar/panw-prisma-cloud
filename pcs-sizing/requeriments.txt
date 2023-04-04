@@ -3,3 +3,5 @@ azure.identity
 azure.mgmt.containerservice
 azure.mgmt.subscription
 azure.mgmt.web
+google.cloud
+google-cloud-resource-manager
