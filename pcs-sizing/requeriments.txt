@@ -1,0 +1,5 @@
+azure.mgmt.compute
+azure.identity
+azure.mgmt.containerservice
+azure.mgmt.subscription
+azure.mgmt.web
