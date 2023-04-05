@@ -213,14 +213,22 @@ def pcs_sizing_oci():
 
     # List all Compartments
 
-    list_compartments = IdentityClient.list_compartments(
+    compartments = IdentityClient.list_compartments(
         compartment_id=config['tenancy']
     )
     
+    # Adding the compartment root to the list
+    compartments_list = []
+    compartments_list.append({'Name':"root","Id":config['tenancy']})
+
+    for compartment in compartments.data:
+        data = {'Name':compartment.name,"Id":compartment.id}
+        compartments_list.append(data)
+
     # For every compartment, list all the VMs and OKE nodes (TODO)
 
-    for compartment in list_compartments.data:
-        response = ComputeClient.list_instances(compartment_id=compartment.id)
+    for compartment in compartments_list:
+        response = ComputeClient.list_instances(compartment_id=compartment['Id'])
         compute_oci = 0
         for instance in response.data:
             if instance.lifecycle_state != "TERMINATED":
@@ -229,7 +237,7 @@ def pcs_sizing_oci():
         # node_pool = ContainerClient.list_node_pools(compartment_id=compartment.id)
         # print(node_pool.data)
 
-        tables("Compartment",str(compartment.name),
+        tables("Compartment",compartment['Name'],
             [
             ["Compute_Instances", compute_oci]
             ])
