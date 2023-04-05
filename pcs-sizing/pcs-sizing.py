@@ -10,7 +10,6 @@ args = parser.parse_args()
 sep = "--------------------------------------------------------------------"
 
 def tables(account,acc,data):
-    print ("{:<40} {:<20} {:<10}\n{}".format(account,'Service','Count',sep))
     for i in data:
         a,b = i
         print ("{:<40} {:<20} {:<10}".format(acc,a,b))
@@ -26,6 +25,7 @@ def pcs_sizing_aws():
     org = boto3.client('organizations')
 
     print("\n{}\nGetting Resources from AWS\n{}".format(sep,sep))
+    print ("{:<40} {:<20} {:<10}\n{}".format('Account','Service','Count',sep))
 
     accounts = []
     # paginator = org.get_paginator('list_accounts')
@@ -120,6 +120,7 @@ def pcs_sizing_az():
     from azure.mgmt.web import WebSiteManagementClient
     sub_client = SubscriptionClient(credential=DefaultAzureCredential())
     print("\n{}\nGetting Resources from AZURE\n{}".format(sep,sep))
+    print ("{:<40} {:<20} {:<10}\n{}".format('Subscription','Service','Count',sep))
     for sub in sub_client.subscriptions.list():
         compute_client = ComputeManagementClient(credential=DefaultAzureCredential(), subscription_id=sub.subscription_id)
         containerservice_client = ContainerServiceClient(credential=DefaultAzureCredential(), subscription_id=sub.subscription_id)
@@ -164,6 +165,7 @@ def pcs_sizing_gcp(project):
     from collections import defaultdict
     
     print("\n{}\nGetting Resources from GCP\n{}".format(sep,sep))
+    print ("{:<40} {:<20} {:<10}\n{}".format('Project','Service','Count',sep))
 
     # pj_client = resourcemanager_v3.ProjectsClient()
     # request = resourcemanager_v3.ListProjectsRequest(
@@ -206,6 +208,7 @@ def pcs_sizing_oci():
     import oci
     
     print("\n{}\nGetting Resources from OCI\n{}".format(sep,sep))
+    print ("{:<40} {:<20} {:<10}\n{}".format('Compartment','Service','Count',sep))
     config = oci.config.from_file()
     IdentityClient = oci.identity.IdentityClient(config)
     ComputeClient = oci.core.ComputeClient(config)
