@@ -5,8 +5,8 @@ env:
       PRISMA_API_URL: "https://api4.prismacloud.io"
 phases:
   install:
-    runtime-versions:
-      python: 3.7
+    # runtime-versions:
+    #   python: 3.9
     commands:
        - pip3 install bridgecrew
        - echo Installing codebuild-extras...
