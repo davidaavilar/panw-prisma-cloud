@@ -40,7 +40,7 @@ resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "${var.stack_name}-igw"
+    Name = "${var.stack_name}-igw",
   }
 }
 
@@ -86,7 +86,7 @@ resource "aws_security_group" "web_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["34.100.27.242/32"]
+    cidr_blocks = ["190.60.234.237/32"]
   }
 
   egress {
@@ -98,24 +98,25 @@ resource "aws_security_group" "web_sg" {
 }
 
 resource "aws_instance" "web_instance" {
-  ami           = "ami-0533f2ba8a1995cf9"
-  instance_type = "t2.micro"
+  ami           = "ami-002070d43b0a4f171" # Amazon Linux "ami-0533f2ba8a1995cf9"
+  instance_type = "t3.small"
   key_name      = "ec2-default"
 
   subnet_id                   = aws_subnet.this_public.id
   vpc_security_group_ids      = [aws_security_group.web_sg.id]
   associate_public_ip_address = true
 
-  user_data = <<-EOF
-  #!/bin/bash -ex
+  # user_data = <<-EOF
+  # #!/bin/bash -ex
 
-  amazon-linux-extras install nginx1 -y
-  echo "<h1>$(curl https://api.kanye.rest/?format=text)</h1>" >  /usr/share/nginx/html/index.html 
-  systemctl enable nginx
-  systemctl start nginx
-  EOF
+  # amazon-linux-extras install nginx1 -y
+  # echo "<h1>$(curl https://api.kanye.rest/?format=text)</h1>" >  /usr/share/nginx/html/index.html 
+  # systemctl enable nginx
+  # systemctl start nginx
+  # EOF
 
   tags = {
-    "Name" : "${var.stack_name}"
+    "Name" : "${var.stack_name}",
+    "eks:testing" = "yes"
   }
 }
