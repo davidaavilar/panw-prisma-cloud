@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        PRISMA_API_URL="${pc_tenant}"
+        PRISMA_API_URL="${PRISMA_API_URL}"
     }
     
     stages {
@@ -14,7 +14,7 @@ pipeline {
                           try {
                             sh '''
                                 checkov --version
-                                checkov -d . -o cli -o junitxml --output-file-path console,results.xml --bc-api-key ${pc_user}::${pc_password} --compact --quiet --soft-fail
+                                checkov -d . -o cli -o junitxml --output-file-path console,results.xml --bc-api-key ${PRISMA_API_KEY} --compact --quiet --soft-fail
                             '''
                           } catch (err) {
                               throw err
