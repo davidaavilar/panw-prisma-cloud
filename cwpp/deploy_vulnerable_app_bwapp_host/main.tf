@@ -124,7 +124,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   location                        = azurerm_resource_group.this.location
   resource_group_name             = azurerm_resource_group.this.name
   network_interface_ids           = [azurerm_network_interface.this.id]
-  size                            = "Standard_DS1_v2"
+  size                            = "Standard_B1s"
   admin_username                  = "azureuser"
   admin_password                  = random_password.this.result
   disable_password_authentication = false
