@@ -6,7 +6,12 @@ pipeline {
     }
     
     stages {
-
+        stage('Checkout') {
+          steps {
+              git branch: 'main', url: "${REPO}"
+              stash includes: '**/*', name: 'source'
+          }
+        }
         stage('PrismaCloud Scanning') {
             steps {
                     script {
