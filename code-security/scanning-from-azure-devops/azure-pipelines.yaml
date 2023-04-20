@@ -11,5 +11,6 @@ steps:
   displayName: 'Install Python 3.8'
 - script: pip install checkov
   displayName: 'Installing Prisma Cloud Code Security'
-- script: checkov --prisma-api-url $(CONSOLE) --bc-api-key $(PRISMA_TOKEN) -d . --repo-id $(System.TeamProject)/$(Build.Repository.Name) --branch $(Build.SourceBranchName) --compact --quiet --soft-fail
+- script: |
+    checkov --prisma-api-url $(PRISMA_API_URL) --bc-api-key $(PRISMA_API_KEY) -d . --repo-id $(System.TeamProject)/$(Build.Repository.Name) --branch $(Build.SourceBranchName) --compact --quiet --soft-fail
   displayName: 'Scan Repo with Prisma Cloud'
