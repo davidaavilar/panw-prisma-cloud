@@ -6,3 +6,5 @@ azure.mgmt.web
 google-cloud-compute
 google-cloud-container
 google-cloud-resource-manager
+boto3
+botocore
