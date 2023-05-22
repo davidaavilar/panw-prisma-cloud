@@ -9,15 +9,15 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...          
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG ./$DOCKERFILE_LOCATION
-      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
+      - docker build -t $IMAGE_REPO_NAME:$CODEBUILD_BUILD_NUMBER ./$DOCKERFILE_LOCATION
+      - docker tag $IMAGE_REPO_NAME:$CODEBUILD_BUILD_NUMBER $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_BUILD_NUMBER     
   post_build:
     commands:
       - echo Build completed on `date`
       # Prisma Cloud Scanning
-      - curl -k -u $PCS_USER:$PCS_PASS --output ./twistcli $PCS_CONSOLE/api/v1/util/twistcli
+      - curl -k -u $PRISMA_ACCESS_KEY:$PRISMA_SECRET --output ./twistcli $PRISMA_API_URL/api/v1/util/twistcli
       - sudo chmod a+x ./twistcli
       - echo "Scanning with Prisma Cloud"
-      - ./twistcli images scan --address $PCS_CONSOLE -u $PCS_USER -p $PCS_PASS --details $IMAGE_REPO_NAME:$IMAGE_TAG
+      - ./twistcli images scan --address $PRISMA_API_URL -u $PRISMA_ACCESS_KEY -p $PRISMA_SECRET --details $IMAGE_REPO_NAME:$CODEBUILD_BUILD_NUMBER
       - echo Pushing the Docker image...
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_BUILD_NUMBER
