@@ -1,12 +1,14 @@
+trigger:
+
+- main
+
 pool:
-  vmImage: ubuntu-latest
+ vmImage: ubuntu-latest
 
 steps:
-- task: Palo-Alto-Networks.build-release-task.custom-build-release-task.prisma-cloud-compute-scan@3
-  displayName: 'Prisma Cloud Serverless Scan'
-  inputs:
-    scanType: serverless
-    twistlockService: '<SERVICE_CONNECTION_NAME>' # The Service Connection name you created to connect to Prisma Clou Compute
-    artifact: 'panw-prisma-cloud/cwpp/scanning-from-azure-devops/serverless/nodejs-lambda-sample.zip' # Your Path to the file you want yo scan
-  enabled: true
-  continueOnError: false
+- task: prisma-cloud-compute-scan@3
+ displayName: prismaCloudScan
+ inputs:
+   scanType: 'serverless'
+   twistlockService: '$(scPrismaCloudConsole)'
+   artifact: '$(functionName)'
