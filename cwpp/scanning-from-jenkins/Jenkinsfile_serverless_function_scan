@@ -1,0 +1,16 @@
+node {
+
+    stage('Checkout') {
+        git branch: 'main', url: "${REPO}"
+        stash includes: '**/*', name: 'source'
+    }
+
+    stage('Installing twistcli tool') {
+            sh 'curl -k -u $PRISMA_ACCESS_KEY:$PRISMA_SECRET --output twistcli https://$PRISMA_API_URL/api/v1/util/twistcli'
+            sh 'chmod a+x twistcli'
+    }
+    
+    stage('Scanning with Prisma Cloud') {
+        sh "./twistcli serverless scan --address https://$PRISMA_API_URL -u $PRISMA_ACCESS_KEY -p $PRISMA_SECRET --details $PROJECT_PATH/$FUNCTION_FILE"
+    }
+}

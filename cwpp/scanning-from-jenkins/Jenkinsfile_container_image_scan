@@ -1,0 +1,27 @@
+node {
+
+    stage('Checkout') {
+        git branch: 'main', url: "${REPO}"
+        stash includes: '**/*', name: 'source'
+    }
+
+    stage('Installing twistcli tool') {
+            sh 'curl -k -u $PRISMA_ACCESS_KEY:$PRISMA_SECRET --output twistcli https://$PRISMA_API_URL/api/v1/util/twistcli'
+            sh 'chmod a+x twistcli'
+    }
+
+    stage('Build Image') {
+        app = docker.build("$IMAGE_REGISTRY:${env.BUILD_ID}", "$PROJECT_PATH/")
+    }
+    
+    stage('Scanning with Prisma Cloud') {
+        sh "./twistcli images scan --address https://$PRISMA_API_URL -u $PRISMA_ACCESS_KEY -p $PRISMA_SECRET --details $IMAGE_REGISTRY:${env.BUILD_ID}"
+    }
+
+    // This stage (Publish Docker image) is optional. If you want to use it, you need to configure a Docker Registry (like DockerHub) in Jenkins credentials
+    // stage('Publish Docker image') {
+    //     withDockerRegistry([ credentialsId: "c68877a3-612b-4a5d-b34c-7f49973274e2", url: "" ]) {
+    //         app.push()
+    //     }
+    // }
+}
