@@ -1,0 +1,11 @@
+version: 0.2
+
+phases:    
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      # Prisma Cloud Scanning
+      - curl -k -u $PRISMA_ACCESS_KEY:$PRISMA_SECRET --output ./twistcli $PRISMA_API_URL/api/v1/util/twistcli
+      - sudo chmod a+x ./twistcli
+      - echo "Scanning with Prisma Cloud"
+      - ./twistcli serverless scan --address $PRISMA_API_URL -u $PRISMA_ACCESS_KEY -p $PRISMA_SECRET --details $FUNCTION_NAME
