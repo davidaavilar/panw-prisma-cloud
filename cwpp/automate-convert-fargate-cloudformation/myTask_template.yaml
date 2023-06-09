@@ -5,21 +5,21 @@ Resources:
     Properties: 
       Family: fargate-task-definition
       NetworkMode: awsvpc
-      ExecutionRoleArn: arn:aws:iam::981290364392:role/ecsTaskExecutionRole
+      ExecutionRoleArn: arn:aws:iam::108863513136:role/ecsTaskExecutionRole
       RequiresCompatibilities:
         - "EC2"
         - "FARGATE"
       ContainerDefinitions: 
         - 
           Name: "my-app"
-          Command:
-            -
-              "/bin/sh -c \"echo '<html> <head> <title>Amazon ECS Sample App</title> <style>body {margin-top: 40px; background-color: #333;} </style> </head><body> <div style=color:white;text-align:center> <h1>Amazon ECS Sample App</h1> <h2>Congratulations!</h2> <p>Your application is now running on a container in Amazon ECS.</p> </div></body></html>' >  /usr/local/apache2/htdocs/index.html && httpd-foreground\""
+          # Command:
+          #   -
+          #     "/bin/sh -c \"echo '<html> <head> <title>Amazon ECS Sample App</title> <style>body {margin-top: 40px; background-color: #333;} </style> </head><body> <div style=color:white;text-align:center> <h1>Amazon ECS Sample App</h1> <h2>Congratulations!</h2> <p>Your application is now running on a container in Amazon ECS.</p> </div></body></html>' >  /usr/local/apache2/htdocs/index.html && httpd-foreground\""
           EntryPoint: 
             - "sh"
             - "-c"
           Essential: true
-          Image: httpd:2.4
+          Image: kimkarimm/foundation-vouchers-test:v1
           PortMappings:
             -
               ContainerPort: 80

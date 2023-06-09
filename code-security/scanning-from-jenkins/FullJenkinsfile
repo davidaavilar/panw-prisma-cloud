@@ -1,0 +1,41 @@
+node {
+    stage('Checkout') {
+        git branch: 'main', url: "${REPO}"
+        stash includes: '**/*', name: 'source'
+    }
+
+    // stage('Code Security Scanning with Checkov') {
+    //     sh "pipenv run pip install checkov"
+    //     sh "pipenv run checkov -d . -o cli -o junitxml --output-file-path console,results.xml --bc-api-key ${PRISMA_API_KEY}::${PRISMA_API_SECRET} --compact --quiet --soft-fail"
+    // }
+
+    stage('Code Security Scanning with Checkov') {
+            script {
+                docker.image('bridgecrew/checkov:latest').inside("--entrypoint=''") {
+                    try {
+                    sh "checkov --version"
+                    sh "checkov -d . -o cli -o junitxml --output-file-path console,results.xml --bc-api-key ${PRISMA_API_KEY}::${PRISMA_API_SECRET} --compact --quiet --soft-fail"
+                    } catch (err) {
+                        throw err
+                }
+            }
+        }
+    }
+
+    stage('Building Docker Image') {
+        app = docker.build("${APP_NAME}:${env.BUILD_ID}", ".")
+    }
+    
+    stage('Image Scanning with Prisma Cloud') {
+        sh "curl -k -u ${PRISMA_API_KEY}:${PRISMA_API_SECRET} --output twistcli ${PRISMA_COMPUTE_URL}/api/v1/util/twistcli"
+        sh "chmod a+x twistcli"
+        sh "./twistcli images scan --address ${PRISMA_COMPUTE_URL} -u ${PRISMA_API_KEY} -p ${PRISMA_API_SECRET} --details ${APP_NAME}:${env.BUILD_ID}"
+    }
+
+    // This stage (Publish Docker image) is optional. If you want to use it, you need to configure a Docker Registry (like DockerHub) in Jenkins credentials
+    stage('Publishing Docker image') {
+        sh "echo 'Docker Image Pushing'"
+        // withDockerRegistry([ credentialsId: "c68877a3-612b-4a5d-b34c-7f49973274e2", url: "" ]) {
+        //     app.push()
+    }
+}

@@ -14,6 +14,12 @@ provider "aws" {
   secret_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
 }
 
+provider "aws" {
+  region     = "us-west-2"
+  access_key = "My key here"
+  secret_key = "Hello World"
+}
+
 data "aws_availability_zones" "available" {}
 
 locals {

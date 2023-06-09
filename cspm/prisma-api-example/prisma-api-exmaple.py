@@ -32,7 +32,7 @@ def get_secret():
 
 def getToken(accesskey,secret,tenant):
     print('Authenticating...')
-    loginurl = "https://{}/login".format(tenant)
+    loginurl = "{}/login".format(tenant)
     credentials = {"username": accesskey,"password": secret}
     payload = json.dumps(credentials)
     headers = {
@@ -53,7 +53,7 @@ def callPrisma(token,tenant,api,querystring=""):
         "Accept": "application/json; charset=UTF-8",
         "x-redlock-auth": token
     }
-    url = "https://{}/{}".format(tenant,api)
+    url = "{}/{}".format(tenant,api)
     resp = requests.request("GET", url, headers=headers,params=querystring)
     resp = json.loads(resp.content)
     print(json.dumps(resp,indent=2))
@@ -69,9 +69,18 @@ def lambda_handler(event, context):
             password = value
         token = getToken(user,password,"api4.prismacloud.io")
     
-    querystring = {"timeType":"to_now","timeUnit":"epoch"}
-    callPrisma(token,tenant,"filter/compliance/posture/suggest")
-
+    querystring = {
+        "defaultRoleId": "string",
+        "email": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "roleIds": [
+            "string"
+        ],
+        "timeZone": "string",
+    }
+    print(token)
+    # callPrisma(token,tenant,"v3/user")
 
 lambda_handler(event="", context="")
 
