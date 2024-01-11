@@ -7,13 +7,13 @@ parser.add_argument("--gcp", "-g", help="Sizing for GCP", action='store_true')
 parser.add_argument("--oci", "-o", help="Sizing for OCI", action='store_true')
 parser.add_argument("--project", "-p", help="Project (only for GCP)", type=str)
 args = parser.parse_args()
-sep = "--------------------------------------------------------------------"
+separator = "--------------------------------------------------------------------"
 
 def tables(account,acc,data):
     for i in data:
         a,b = i
         print ("{:<40} {:<20} {:<10}".format(acc,a,b))
-    print(sep)
+    print(separator)
 
 def pcs_sizing_aws():
     import boto3
@@ -24,8 +24,7 @@ def pcs_sizing_aws():
     sts = boto3.client("sts")
     org = boto3.client('organizations')
 
-    print("\n{}\nGetting Resources from AWS\n{}".format(sep,sep))
-    print ("{:<40} {:<20} {:<10}\n{}".format('Account','Service','Count',sep))
+    print("\n{}\nGetting Resources from AWS for all Regions\n{}".format(separator,separator))
 
     accounts = []
     # paginator = org.get_paginator('list_accounts')
@@ -55,7 +54,7 @@ def pcs_sizing_aws():
         fargate_all = 0
         lambdas_all = 0
 
-        for region in us_regions:
+        for region in regions:
 
             ec2 = boto3.client('ec2',region_name=region)
             client_ecs = boto3.client('ecs',region_name=region)
@@ -65,7 +64,7 @@ def pcs_sizing_aws():
                 ec2_group = ec2.describe_instances(
                     Filters=[{
                     'Name': 'instance-state-code',
-                    'Values': ["0","16","32","64","80"] # 0 (pending), 16 (running), 32 (shutting-down), 48 (terminated), 64 (stopping), and 80 (stopped)
+                    'Values': ["16"] # 0 (pending), 16 (running), 32 (shutting-down), 48 (terminated), 64 (stopping), and 80 (stopped)
                         },
                     ]
                     )['Reservations']
@@ -99,7 +98,8 @@ def pcs_sizing_aws():
                 lambdas_all += len(lambdas)
             except botocore.exceptions.ClientError as error:
                 raise error
-
+        print ("{:<40} {:<20} {:<10}\n{}".format('Account','Service','Count',separator))
+        
         tables("Account",account,
             [
             ["EC2", ec2_all],
@@ -119,8 +119,7 @@ def pcs_sizing_az():
     from azure.mgmt.subscription import SubscriptionClient
     from azure.mgmt.web import WebSiteManagementClient
     sub_client = SubscriptionClient(credential=DefaultAzureCredential())
-    print("\n{}\nGetting Resources from AZURE\n{}".format(sep,sep))
-    print ("{:<40} {:<20} {:<10}\n{}".format('Subscription','Service','Count',sep))
+    print("\n{}\nGetting Resources from AZURE\n{}".format(separator,separator))
     for sub in sub_client.subscriptions.list():
         compute_client = ComputeManagementClient(credential=DefaultAzureCredential(), subscription_id=sub.subscription_id)
         containerservice_client = ContainerServiceClient(credential=DefaultAzureCredential(), subscription_id=sub.subscription_id)
@@ -128,7 +127,13 @@ def pcs_sizing_az():
         # List VMs in subscription
         vm_list = []
         for vm in compute_client.virtual_machines.list_all():
-            vm_list.append(vm)
+            array = vm.id.split("/")
+            resource_group = array[4]
+            vm_name = array[-1]
+            statuses = compute_client.virtual_machines.instance_view(resource_group, vm_name).statuses
+            status = len(statuses) >= 2 and statuses[1]
+            if status and status.code == 'PowerState/running':
+                vm_list.append(vm_name)
 
         # List AKS Clusters in subscription
         clusters_list = []
@@ -147,7 +152,7 @@ def pcs_sizing_az():
         for function in app_service_client.web_apps.list():
             if function.kind.startswith('function'):
                 function_list += 1
-
+        print ("{:<40} {:<20} {:<10}\n{}".format('Subscription','Service','Count',separator))
         tables("Subscription",str(sub.display_name + " (" + sub.subscription_id.split('-')[4].strip() + ")"),
             [
             ["VM", len(vm_list)],
@@ -164,8 +169,7 @@ def pcs_sizing_gcp(project):
     from google.cloud import resourcemanager_v3
     from collections import defaultdict
     
-    print("\n{}\nGetting Resources from GCP\n{}".format(sep,sep))
-    print ("{:<40} {:<20} {:<10}\n{}".format('Project','Service','Count',sep))
+    print("\n{}\nGetting Resources from GCP\n{}".format(separator,separator))
 
     # pj_client = resourcemanager_v3.ProjectsClient()
     # request = resourcemanager_v3.ListProjectsRequest(
@@ -185,7 +189,8 @@ def pcs_sizing_gcp(project):
     for zone, response in agg_list:
         if response.instances:
             for instance in response.instances:
-                compute_list.append(instance.name)
+                if instance.status == "RUNNING":
+                    compute_list.append(instance.name)
 
     # Getting the Compute Instances for GKE
     gke_client = container_v1beta1.ClusterManagerClient()
@@ -197,6 +202,7 @@ def pcs_sizing_gcp(project):
     for cluster in response.clusters:
         node_count += cluster.current_node_count
 
+    print ("{:<40} {:<20} {:<10}\n{}".format('Project','Service','Count',separator))
     tables("Project",project,
            [
         ["VM", len(compute_list)],
@@ -207,8 +213,7 @@ def pcs_sizing_oci():
 
     import oci
     
-    print("\n{}\nGetting Resources from OCI\n{}".format(sep,sep))
-    print ("{:<40} {:<20} {:<10}\n{}".format('Compartment','Service','Count',sep))
+    print("\n{}\nGetting Resources from OCI\n{}".format(separator,separator))
     config = oci.config.from_file()
     IdentityClient = oci.identity.IdentityClient(config)
     ComputeClient = oci.core.ComputeClient(config)
@@ -229,17 +234,18 @@ def pcs_sizing_oci():
         compartments_list.append(data)
 
     # For every compartment, list all the VMs and OKE nodes (TODO)
-
+    
+    print ("{:<40} {:<20} {:<10}\n{}".format('Compartment','Service','Count',separator))
     for compartment in compartments_list:
         response = ComputeClient.list_instances(compartment_id=compartment['Id'])
         compute_oci = 0
         for instance in response.data:
-            if instance.lifecycle_state != "TERMINATED":
+            if instance.lifecycle_state == "RUNNING":
                 compute_oci += 1
 
-        # node_pool = ContainerClient.list_node_pools(compartment_id=compartment.id)
+        # node_pool = ContainerClient.list_node_pools(compartment_id=compartment['Id'])
         # print(node_pool.data)
-
+    
         tables("Compartment",compartment['Name'],
             [
             ["Compute_Instances", compute_oci]
