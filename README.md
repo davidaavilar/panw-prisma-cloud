@@ -7,5 +7,3 @@ This repo includes some useful resources (from scripts to commands) to help to a
 2. [Cloud Security Posture Managment (CSPM)](https://github.com/davidaavilar/panw-prisma-cloud/tree/main/cspm)
 
 3. [Cloud Workload Protection (CWP)](https://github.com/davidaavilar/panw-prisma-cloud/tree/main/cwpp)
-
-4. [Prisma Cloud Sizing](https://github.com/davidaavilar/panw-prisma-cloud/tree/main/pcs-sizing)
