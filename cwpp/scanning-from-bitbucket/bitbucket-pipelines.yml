@@ -1,0 +1,28 @@
+image: atlassian/default-image:3
+
+pipelines:
+  default:
+    - step:
+        name: 'Docker Build'
+        services:
+          - docker
+        script:
+          - docker build app/ -t $IMAGENAME:$BITBUCKET_BUILD_NUMBER
+          - docker images
+          - docker save --output tmp-image.docker $IMAGENAME:$BITBUCKET_BUILD_NUMBER
+        artifacts:
+          - tmp-image.docker
+    - step:
+        name: 'Image Scanning'
+        services:
+          - docker
+        script:
+          - docker load --input ./tmp-image.docker
+          - curl -k -u $PRISMA_AK:$PRISMA_SECRET --output ./twistcli $PRISMA_COMPUTE/api/v1/util/twistcli
+          - chmod a+x ./twistcli
+          - echo "Scanning with Prisma Cloud"
+          - ./twistcli images scan --address $PRISMA_COMPUTE -u $PRISMA_AK -p $PRISMA_SECRET --docker-address tcp://localhost:2375 --containerized --details $IMAGENAME:$BITBUCKET_BUILD_NUMBER
+    - step:
+        name: 'Docker Push'
+        script:
+          - echo 'Simulating Docker Push'

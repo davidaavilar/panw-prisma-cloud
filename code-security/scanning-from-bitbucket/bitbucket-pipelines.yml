@@ -1,0 +1,12 @@
+image: atlassian/default-image:3
+
+pipelines:
+  default:
+    - parallel:
+      - step:
+          name: 'Security scan'
+          script:
+            - apt-get update && apt-get install python3-pip -y
+            - pip3 --version
+            - pip3 install checkov
+            - checkov -d . --use-enforcement-rules --bc-api-key $PRISMA_AK::$PRISMA_SECRET --repo-id $BITBUCKET_WORKSPACE/$BITBUCKET_REPO_FULL_NAME --branch $BITBUCKET_BRANCH
