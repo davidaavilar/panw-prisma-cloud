@@ -8,10 +8,11 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 }
 
+
 provider "aws" {
   region     = "us-west-2"
-  access_key = "AKIAIOSFODNN7EXAMPLE"
-  secret_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+  access_key = "Hello World Key"
+  secret_key = "Hello World Secret"
 }
 
 provider "aws" {
