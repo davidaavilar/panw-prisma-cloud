@@ -1,0 +1,25 @@
+# You need to create two variables; 
+# PRISMA_API_UR : https://apiX.prismacloud.io
+# PRISMA_TOKEN : accesskey::secret
+
+image: python:3.8
+
+code_scanning:
+    script:
+        - echo "Installing Checkov"
+        - pip3 install checkov
+        - echo "Scanning with Prisma Cloud"
+        - checkov -d . --use-enforcement-rules --bc-api-key $PRISMA_TOKEN --repo-id $CI_PROJECT_PATH --branch $CI_COMMIT_BRANCH
+
+# build1:
+#   stage: build
+#   script:
+#     - echo "Do your build here"
+
+# deploy1:
+#   stage: deploy
+#   script:
+#     - echo "Do your deploy here"
+#   environment: production
+
+

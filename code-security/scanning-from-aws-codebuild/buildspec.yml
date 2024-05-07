@@ -8,7 +8,7 @@ phases:
     # runtime-versions:
     #   python: 3.9
     commands:
-       - pip3 install bridgecrew
+       - pip3 install checkov
        - echo Installing codebuild-extras...
        - curl -fsSL https://raw.githubusercontent.com/bridgecrewio/aws-codebuild-extras/master/install >> extras.sh
        - . ./extras.sh
