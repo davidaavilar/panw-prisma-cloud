@@ -19,7 +19,7 @@ Resources:
             - "sh"
             - "-c"
           Essential: true
-          Image: kimkarimm/foundation-vouchers-test:v1
+          Image: httpd:2.4
           PortMappings:
             -
               ContainerPort: 80

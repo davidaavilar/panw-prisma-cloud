@@ -1,35 +1,33 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Resources:
   taskdefinition:
     Properties:
       ContainerDefinitions:
-      - Command:
-        - '/bin/sh -c "echo ''<html> <head> <title>Amazon ECS Sample App</title> <style>body
-          {margin-top: 40px; background-color: #333;} </style> </head><body> <div
-          style=color:white;text-align:center> <h1>Amazon ECS Sample App</h1> <h2>Congratulations!</h2>
-          <p>Your application is now running on a container in Amazon ECS.</p> </div></body></html>''
-          >  /usr/local/apache2/htdocs/index.html && httpd-foreground"'
-        Cpu: 256
+      - Cpu: 256
         DependsOn:
-        - Condition: START
+        - Condition: HEALTHY
           ContainerName: TwistlockDefender
         EntryPoint:
-        - /var/lib/twistlock/fargate/fargate_defender.sh
+        - /var/lib/twistlock/fargate/defender
         - fargate
         - entrypoint
         - sh
         - -c
         Environment:
         - Name: TW_IMAGE_NAME
-          Value: httpd:2.4
+          Value: kimkarimm/foundation-vouchers-test:v1
         - Name: TW_CONTAINER_NAME
           Value: my-app
         - Name: DEFENDER_TYPE
           Value: fargate
         - Name: FARGATE_TASK
           Value: fargate-task-definition
+        - Name: FILESYSTEM_MONITORING
+          Value: "true"
+        - Name: FIPS_ENABLED
+          Value: "false"
         Essential: true
-        Image: httpd:2.4
+        Image: kimkarimm/foundation-vouchers-test:v1
         LinuxParameters:
           Capabilities:
             Add:
@@ -41,7 +39,7 @@ Resources:
           HostPort: 80
           Protocol: tcp
         VolumesFrom:
-        - ReadOnly: 'false'
+        - ReadOnly: false
           SourceContainer: TwistlockDefender
       - EntryPoint:
         - /usr/local/bin/defender
@@ -49,18 +47,32 @@ Resources:
         - sidecar
         Environment:
         - Name: INSTALL_BUNDLE
-          Value: tokenConsole
+          Value: eyJzZWNyZXRzIjp7InNlcnZpY2UtcGFyYW1ldGVyIjoiVU5LdXpCQk9hejBGQ0hnWW5oV25zYmlYQVNmVnZlK0FzTWNScTB0MDVhbWtjYmxOTGdLT0JuTzNXWnd6RHVBOW10cGpWNVErbVBJMGZJSHl0Nnh4TGc9PSJ9LCJnbG9iYWxQcm94eU9wdCI6eyJodHRwUHJveHkiOiIiLCJub1Byb3h5IjoiIiwiY2EiOiIiLCJ1c2VyIjoiIiwicGFzc3dvcmQiOnsiZW5jcnlwdGVkIjoiIn19LCJjdXN0b21lcklEIjoidXMtNC0xNjEwNTYzMDciLCJhcGlLZXkiOiJtSFh5ZlFDMVJtbE00dVhjK2FSbVVMU1cxREdITVpobzZFKzhybGZ5K2YwOXJoSC8rR3ZEQmJjamhWSHlSWlFpaTlQelV2cWxmRGN2K2xVYUhJenluUT09IiwibWljcm9zZWdDb21wYXRpYmxlIjpmYWxzZX0=
         - Name: DEFENDER_TYPE
           Value: fargate
         - Name: FARGATE_TASK
           Value: fargate-task-definition
         - Name: WS_ADDRESS
-          Value: wss://us-east1.cloud.twistlock.com:443
-        Essential: 'true'
-        Image: registry-auth.twistlock.com/tw_Token/twistlock/defender:defender_21_04_421
+          Value: wss://us-west1.cloud.twistlock.com:443
+        - Name: FILESYSTEM_MONITORING
+          Value: "true"
+        - Name: FIPS_ENABLED
+          Value: "false"
+        Essential: true
+        HealthCheck:
+          command:
+          - /usr/local/bin/defender
+          - fargate
+          - healthcheck
+          interval: 5
+          retries: 3
+          startPeriod: 1
+          timeout: 5
+        Image: registry-auth.twistlock.com/tw_pfv4mzkgtidy8xfpudrnoq9w0wykrjmh/twistlock/defender:defender_30_03_122
         Name: TwistlockDefender
+        PortMappings: []
       Cpu: 256
-      ExecutionRoleArn: arn:aws:iam::981290364392:role/ecsTaskExecutionRole
+      ExecutionRoleArn: arn:aws:iam::108863513136:role/ecsTaskExecutionRole
       Family: fargate-task-definition
       Memory: 512
       NetworkMode: awsvpc
